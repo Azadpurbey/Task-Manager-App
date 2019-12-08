@@ -18,16 +18,16 @@ router.post('/tasks',auth,async(req,res)=>{   //creation of task
     }
  })
  
- router.get('/tasks',async(req,res)=>{
+ router.get('/tasks/me',auth,async(req,res)=>{        //read all tasks
     try{
-      const tasks=await Task.find({})
+      const tasks=await Task.find({owner:req.user._id})
       res.status(200).send(tasks)
     }catch{
        res.status(400).send(error)
     }
  })
  
- router.get('/tasks/:id',auth,async(req,res)=>{             //read task
+ router.get('/tasks/:id',auth,async(req,res)=>{             //read task by id
     const _id=req.params.id
     try{
        const task=await Task.findOne({_id,owner:req.user._id})
@@ -40,24 +40,26 @@ router.post('/tasks',auth,async(req,res)=>{   //creation of task
     }
  })
  
- router.patch('/tasks/:id',async(req,res)=>{
+ router.patch('/tasks/:id',auth,async(req,res)=>{        //update task by id
     const updates= Object.keys(req.body) 
     const allowedUpdates=['description']
     const isValidOperation=updates.every((update)=>allowedUpdates.includes(update))
+  
     if(!isValidOperation){
        res.status(400).send({error:"This update is not allowed"})
     }
- 
-    try{
-       const task=await Task.findById(req.params.id)
+
+   try{
+       const task=await Task.findOne({_id:req.params.id,owner:req.user._id})
+       if(!task){
+         return res.status(404).send("you are not allowed to update this task")
+      }
        updates.forEach((update)=>task[update]=req.body[update])
        
        
 
       //  const task=await Task.findByIdAndUpdate(req.params.id,req.body,{new:true, runValidators:true})
-       if(!task){
-          return res.status(404).send()
-       }
+
        await task.save()
        res.send(task)
  
@@ -66,11 +68,12 @@ router.post('/tasks',auth,async(req,res)=>{   //creation of task
     }
  })
  
- router.delete('/tasks/:id',async(req,res)=>{
+ router.delete('/tasks/:id',auth,async(req,res)=>{       //delete task by id
     try{
-      const task=await Task.findByIdAndDelete(req.params.id)
+      const task=await Task.findOne({_id:req.params.id,owner:req.user._id})
+      // const task=await Task.findByIdAndDelete(req.params.id)
       if(!task){
-        res.status(400).send("User not found")
+        res.status(400).send("you are not allowed to delete this task")
       }
       res.send(task)
     }catch(e){

@@ -1,6 +1,5 @@
 const mongoose=require('mongoose')
 
-
 const taskSchema=new mongoose.Schema({
   description:{
     type:String,
@@ -22,7 +21,7 @@ const taskSchema=new mongoose.Schema({
 })
 
 taskSchema.pre('save',async function(next){
-  console.log("just before the saving!")
+  // console.log("just before the saving!")
 
   next()
 })
