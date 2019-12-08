@@ -2,6 +2,7 @@ const mongoose=require('mongoose')
 const validator=require('validator')
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
+const Task=require('./task')
 
 
 const userSchema=new mongoose.Schema({
@@ -48,6 +49,10 @@ const userSchema=new mongoose.Schema({
       required:true
     }
   }]
+
+},
+{
+  timestamps:true
 })
 
 userSchema.virtual('tasks',{
@@ -70,7 +75,7 @@ userSchema.methods.generateAuthToken=async function(){
   return token
 }
 
-userSchema.statics.findByCredential=async (email,password)=>{
+userSchema.statics.findByCredentials=async (email,password)=>{
   const user=await User.findOne({email})
   if(!user){
     throw new Error('unable to connect')
@@ -85,7 +90,7 @@ userSchema.statics.findByCredential=async (email,password)=>{
 //convert plain trxt into encrypted one before saving
 userSchema.pre('save', async function(next){
   const user=this
-  console.log("just before the saving!")
+  // console.log("just before the saving!")
   if(user.isModified('password')){
     user.password=await bcrypt.hash(user.password,8)
   }
@@ -93,6 +98,6 @@ userSchema.pre('save', async function(next){
   next()
 })
 
-const User=mongoose.model(("users"),userSchema)
+const User=mongoose.model(("User"),userSchema)
 
 module.exports=User

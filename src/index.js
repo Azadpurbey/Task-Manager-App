@@ -1,9 +1,9 @@
 const express=require('express')
 require('./db/mongoose')
-const app=express()
 const userRouter=require('./routers/user')
 const taskRouter=require('./routers/task')
 
+const app=express()
 const port=process.env.PORT || 3000
 
 
@@ -50,15 +50,17 @@ app.post('/upload',upload.single('upload'),(req,res)=>{
    res.send()
 })
 
-const Task=require('./models/task')
-const User=require('./models/user')
+// const Task=require('./models/task')
 
-const main=async()=>{
-   // const task=await Task.findById('5de9126df9b6e41f5c4a3208')
-   // await task.populate('owner').execPopulate()
-   // console.log(task.owner)
-   const user=await User.findById('5de9124cf9b6e41f5c4a3205')
-   await user.populate('tasks').execPopulate()
-   console.log(user.tasks)
-}
-main()
+// const User=require('./models/user')
+
+// const main=async()=>{
+//    const task=await Task.findById('5dece81d27251d19083d6e0e')
+//    await task.populate('owner').execPopulate()
+//    console.log(task.owner)
+
+//    // const user=await User.findById('5decd2d1d6676828d8b46f50')
+//    // await user.populate('tasks').execPopulate()
+//    // console.log(user.tasks)
+// }
+// main()

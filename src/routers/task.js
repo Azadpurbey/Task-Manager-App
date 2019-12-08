@@ -27,16 +27,16 @@ router.post('/tasks',auth,async(req,res)=>{   //creation of task
     }
  })
  
- router.get('/tasks/:id',auth,async(req,res)=>{
+ router.get('/tasks/:id',auth,async(req,res)=>{             //read task
     const _id=req.params.id
     try{
-       const task=await Task.findById({_id,owner:req.user._id})
+       const task=await Task.findOne({_id,owner:req.user._id})
        if(!task){
-          return res.status(400).send("task not found")
+          return res.status(404).send("task not found")
         }
           res.send(task)
-    }catch{
-       res.status(400).send(error)
+    }catch(e){
+       res.status(500).send(e)
     }
  })
  
@@ -45,19 +45,20 @@ router.post('/tasks',auth,async(req,res)=>{   //creation of task
     const allowedUpdates=['description']
     const isValidOperation=updates.every((update)=>allowedUpdates.includes(update))
     if(!isValidOperation){
-       res.status(400).send("This update is not allowed")
+       res.status(400).send({error:"This update is not allowed"})
     }
  
     try{
        const task=await Task.findById(req.params.id)
        updates.forEach((update)=>task[update]=req.body[update])
        
-       await task.save()
+       
 
       //  const task=await Task.findByIdAndUpdate(req.params.id,req.body,{new:true, runValidators:true})
        if(!task){
           return res.status(404).send()
        }
+       await task.save()
        res.send(task)
  
     }catch(e){
@@ -69,7 +70,7 @@ router.post('/tasks',auth,async(req,res)=>{   //creation of task
     try{
       const task=await Task.findByIdAndDelete(req.params.id)
       if(!task){
-       return res.status(400).send("User not found")
+        res.status(400).send("User not found")
       }
       res.send(task)
     }catch(e){
