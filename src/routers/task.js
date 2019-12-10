@@ -27,10 +27,12 @@ router.post('/tasks',auth,async(req,res)=>{   //creation of task
      }
      if(req.query.sortBy){
         const parts=req.query.sortBy.split(':')
-        sort[parts[0]]= (parts[1]==="decs")?-1:1
-        console.log(typeof(parts[1]))
-        console.log(parts[0],parts[1])
-        console.log(sort.createdAt)
+
+        sort[parts[0]]= (parts[1]==="desc")?-1:1
+
+      //   console.log(typeof(parts[1]))
+      //   console.log(parts[0],parts[1])
+      //   console.log(sort.createdAt)
      }
    
    try{

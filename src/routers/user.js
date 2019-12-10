@@ -103,7 +103,7 @@ const upload=multer({
    }
 })
 
-router.post('/users/me/avatar',auth,upload.single('avatar'),async(req,res)=>{
+router.post('/users/me/avatar',auth,upload.single('avatar'),async(req,res)=>{      //upload pic
    const buffer =await sharp(req.file.buffer).resize({width:250,height:250}).png().toBuffer()
    req.user.avatar=buffer
    await req.user.save()
@@ -112,7 +112,7 @@ router.post('/users/me/avatar',auth,upload.single('avatar'),async(req,res)=>{
    res.status(400).send({error:error.message})
 })
 
-router.delete('/users/me/avatar',auth,async (req,res)=>{
+router.delete('/users/me/avatar',auth,async (req,res)=>{    //delete avatar
    req.user.avatar=undefined
    await req.user.save()
    res.send()
